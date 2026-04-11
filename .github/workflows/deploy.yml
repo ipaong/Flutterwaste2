@@ -33,7 +33,7 @@ jobs:
 
       - name: Deploy to Vercel
         run: |
-          vercel deploy build/web --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: team_wwPmirW9u8oiiF0zczGFZsw9
           VERCEL_PROJECT_ID: prj_DqYdfKPmSQGEawzctSkNxvuN9LNF
