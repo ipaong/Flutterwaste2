@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Fetching from Environment Variables (set via --dart-define in Vercel)
   const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
@@ -22,18 +21,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TUWaste WebApp',
+      title: 'TUWaste Hello World',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2E7D32),
-          primary: const Color(0xFF2E7D32),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      builder: (context, child) {
-        return MobileLayoutWrapper(child: child!);
-      },
+      builder: (context, child) => MobileLayoutWrapper(child: child!),
       home: const MyHomePage(),
     );
   }
@@ -46,19 +40,17 @@ class MobileLayoutWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
+      color: Colors.grey[100],
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 500,
-          ),
+          constraints: const BoxConstraints(maxWidth: 500),
           child: Container(
             decoration: BoxDecoration(
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
-                  spreadRadius: 2,
                 ),
               ],
             ),
@@ -70,60 +62,102 @@ class MobileLayoutWrapper extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final _controller = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _submitMessage() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await Supabase.instance.client
+          .from('test_messages')
+          .insert({'content': text});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ส่งข้อมูลไป Supabase สำเร็จ! ✅')),
+        );
+        _controller.clear();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TUWaste'),
+        title: const Text('Hello World'),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.recycling, size: 80, color: Color(0xFF2E7D32)),
-            const SizedBox(height: 20),
             const Text(
-              'ยินดีต้อนรับสู่ TUWaste',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Hello World!',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
-            const Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                'Mobile-First WebApp สำหรับการจัดการขยะในมหาวิทยาลัย',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+            const SizedBox(height: 8),
+            const Text(
+              'ทดสอบการเชื่อมต่อ Supabase',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 40),
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'พิมพ์ข้อความที่นี่...',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.message),
               ),
             ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Check if keys are loaded
-                const url = String.fromEnvironment('SUPABASE_URL');
-                if (url.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Error: Supabase Keys not found!')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Supabase Connected!')),
-                  );
-                }
-              },
-              icon: const Icon(Icons.login),
-              label: const Text('ตรวจสอบการเชื่อมต่อ'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _submitMessage,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('ส่งข้อความ (Submit)'),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
