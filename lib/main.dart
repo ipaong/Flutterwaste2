@@ -4,10 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // TODO: Replace with your actual Supabase URL and Anon Key
+  // Fetching from Environment Variables (set via --dart-define in Vercel)
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
   await Supabase.initialize(
-    url: 'YOUR_SUPABASE_URL',
-    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(const MyApp());
@@ -23,13 +26,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2E7D32), // Green for waste management theme
+          seedColor: const Color(0xFF2E7D32),
           primary: const Color(0xFF2E7D32),
         ),
         useMaterial3: true,
-        fontFamily: 'Prompt', // Common Thai font, you can add it to pubspec.yaml later
       ),
-      // Use a wrapper to enforce mobile-first layout on Web
       builder: (context, child) {
         return MobileLayoutWrapper(child: child!);
       },
@@ -38,7 +39,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// A wrapper that centers the content and limits its width on large screens
 class MobileLayoutWrapper extends StatelessWidget {
   final Widget child;
   const MobileLayoutWrapper({super.key, required this.child});
@@ -46,11 +46,11 @@ class MobileLayoutWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200], // Background color for the area outside the "phone"
+      color: Colors.grey[200],
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(
-            maxWidth: 500, // Typical max width for mobile apps on web
+            maxWidth: 500,
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -75,8 +75,6 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final supabase = Supabase.instance.client;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('TUWaste'),
@@ -105,10 +103,20 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(height: 30),
             ElevatedButton.icon(
               onPressed: () {
-                // TODO: Implement Login or Navigation
+                // Check if keys are loaded
+                const url = String.fromEnvironment('SUPABASE_URL');
+                if (url.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Error: Supabase Keys not found!')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Supabase Connected!')),
+                  );
+                }
               },
               icon: const Icon(Icons.login),
-              label: const Text('เข้าสู่ระบบด้วย Supabase'),
+              label: const Text('ตรวจสอบการเชื่อมต่อ'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
