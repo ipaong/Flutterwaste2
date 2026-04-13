@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TUWaste สวัสดี',
+      title: 'Hello World',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('สวัสดี'),
+        title: const Text('Hello World'),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -122,12 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'สวัสดี!',
+              'Hello World',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
-              'ทดสอบการเชื่อมต่อ Supabase',
+              'Supabase Input Form',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 40),
