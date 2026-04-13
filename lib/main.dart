@@ -9,6 +9,7 @@ Future<void> main() async {
 
   if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
     debugPrint('❌ Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables');
+    return;
   }
 
   await Supabase.initialize(
@@ -53,7 +54,7 @@ class MobileLayoutWrapper extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                 ),
               ],
