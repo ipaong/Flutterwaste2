@@ -4,8 +4,9 @@
   "trailingSlash": false,
   "routes": [
     { "handle": "filesystem" },
+    { "src": "^/(assets|canvaskit|icons)/(.*)$", "dest": "/web/$1/$2" },
+    { "src": "^/(flutter.*\\.js|main\\.dart\\.js|manifest\\.json|favicon\\.png|version\\.json)$", "dest": "/web/$1" },
     { "src": "^/$", "dest": "/web/index.html" },
-    { "src": "^/(.*)$", "dest": "/web/$1" },
     { "src": "^/(.*)$", "dest": "/web/index.html" }
   ]
 }
