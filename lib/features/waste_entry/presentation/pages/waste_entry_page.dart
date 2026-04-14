@@ -47,89 +47,89 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final contentWidth = constraints.maxWidth.clamp(360.0, 820.0);
+            final sidePadding = contentWidth >= 700 ? 24.0 : 14.0;
+
             return ClipRect(
               child: Center(
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: SizedBox(
-                    width: 390,
-                    height: constraints.maxHeight,
-                    child: DecoratedBox(
-                      decoration: const BoxDecoration(
-                        gradient: RadialGradient(
-                          center: Alignment.topLeft,
-                          radius: 1.5,
-                          colors: [
-                            Color(0xFFC8DAEE),
-                            Color(0xFF8AA3BE),
-                            Color(0xFF3A4D65),
-                          ],
-                        ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: CustomPaint(painter: _CircuitPainter()),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-                            child: Column(
-                              children: [
-                                _TopBar(onAvatarPressed: () => _showDev('โปรไฟล์')),
-                                const SizedBox(height: 10),
-                                _HeaderForm(onPressed: _showDev),
-                                const SizedBox(height: 10),
-                                _GeneralInfo(onPressed: _showDev),
-                                const SizedBox(height: 10),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: _WasteTypePanel(
-                                          selectedType: _selectedType,
-                                          wasteTypes: _wasteTypes,
-                                          onSelectType: (value) {
-                                            setState(() => _selectedType = value);
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            _HazardPanel(
-                                              hazards: _hazards,
-                                              onPressed: _showDev,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            _ComponentPanel(
-                                              components: _components,
-                                              onPressed: _showDev,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            _QuantityPanel(
-                                              unit: _unit,
-                                              onUnitChanged: (value) {
-                                                setState(() => _unit = value);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                _BottomActions(onPressed: _showDev),
-                                const SizedBox(height: 10),
-                                _BottomNav(onPressed: _showDev),
-                              ],
-                            ),
-                          ),
+                child: SizedBox(
+                  width: contentWidth,
+                  height: constraints.maxHeight,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.topLeft,
+                        radius: 1.5,
+                        colors: [
+                          Color(0xFFC8DAEE),
+                          Color(0xFF8AA3BE),
+                          Color(0xFF3A4D65),
                         ],
                       ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(painter: _CircuitPainter()),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(sidePadding, 10, sidePadding, 10),
+                          child: Column(
+                            children: [
+                              _TopBar(onAvatarPressed: () => _showDev('โปรไฟล์')),
+                              const SizedBox(height: 10),
+                              _HeaderForm(onPressed: _showDev),
+                              const SizedBox(height: 10),
+                              _GeneralInfo(onPressed: _showDev),
+                              const SizedBox(height: 10),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _WasteTypePanel(
+                                        selectedType: _selectedType,
+                                        wasteTypes: _wasteTypes,
+                                        onSelectType: (value) {
+                                          setState(() => _selectedType = value);
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          _HazardPanel(
+                                            hazards: _hazards,
+                                            onPressed: _showDev,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          _ComponentPanel(
+                                            components: _components,
+                                            onPressed: _showDev,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          _QuantityPanel(
+                                            unit: _unit,
+                                            onUnitChanged: (value) {
+                                              setState(() => _unit = value);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              _BottomActions(onPressed: _showDev),
+                              const SizedBox(height: 10),
+                              _BottomNav(onPressed: _showDev),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
