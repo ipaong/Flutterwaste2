@@ -47,8 +47,11 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final contentWidth = constraints.maxWidth.clamp(360.0, 820.0);
-            final sidePadding = contentWidth >= 700 ? 24.0 : 14.0;
+            final isDesktopLike = constraints.maxWidth >= 900;
+            final contentWidth = isDesktopLike
+                ? 768.0
+                : constraints.maxWidth.clamp(360.0, 768.0);
+            final sidePadding = contentWidth >= 700 ? 22.0 : 14.0;
 
             return ClipRect(
               child: Center(
@@ -79,11 +82,11 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
                           child: Column(
                             children: [
                               _TopBar(onAvatarPressed: () => _showDev('โปรไฟล์')),
-                              const SizedBox(height: 10),
+                              SizedBox(height: contentWidth >= 700 ? 12 : 10),
                               _HeaderForm(onPressed: _showDev),
-                              const SizedBox(height: 10),
+                              SizedBox(height: contentWidth >= 700 ? 12 : 10),
                               _GeneralInfo(onPressed: _showDev),
-                              const SizedBox(height: 10),
+                              SizedBox(height: contentWidth >= 700 ? 12 : 10),
                               Expanded(
                                 child: Row(
                                   children: [
@@ -91,12 +94,13 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
                                       child: _WasteTypePanel(
                                         selectedType: _selectedType,
                                         wasteTypes: _wasteTypes,
+                                        onPressed: _showDev,
                                         onSelectType: (value) {
                                           setState(() => _selectedType = value);
                                         },
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: contentWidth >= 700 ? 12 : 10),
                                     Expanded(
                                       child: Column(
                                         children: [
@@ -104,12 +108,12 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
                                             hazards: _hazards,
                                             onPressed: _showDev,
                                           ),
-                                          const SizedBox(height: 10),
+                                          SizedBox(height: contentWidth >= 700 ? 12 : 10),
                                           _ComponentPanel(
                                             components: _components,
                                             onPressed: _showDev,
                                           ),
-                                          const SizedBox(height: 10),
+                                          SizedBox(height: contentWidth >= 700 ? 12 : 10),
                                           _QuantityPanel(
                                             unit: _unit,
                                             onUnitChanged: (value) {
@@ -122,9 +126,9 @@ class _WasteEntryPageState extends State<WasteEntryPage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: contentWidth >= 700 ? 12 : 10),
                               _BottomActions(onPressed: _showDev),
-                              const SizedBox(height: 10),
+                              SizedBox(height: contentWidth >= 700 ? 12 : 10),
                               _BottomNav(onPressed: _showDev),
                             ],
                           ),
@@ -149,15 +153,22 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.sizeOf(context).width >= 700;
+
     return Row(
       children: [
-        const Icon(Icons.science_outlined, color: Color(0xFFE4EEFF), size: 30),
-        const SizedBox(width: 10),
+        Icon(
+          Icons.science_outlined,
+          color: const Color(0xFFE4EEFF),
+          size: isWide ? 34 : 30,
+        ),
+        SizedBox(width: isWide ? 12 : 10),
         Text(
           'LabFlow',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             color: const Color(0xFFF0F5FF),
             fontWeight: FontWeight.w700,
+            fontSize: isWide ? 44 : 32,
           ),
         ),
         const Spacer(),
@@ -316,11 +327,13 @@ class _WasteTypePanel extends StatelessWidget {
   const _WasteTypePanel({
     required this.selectedType,
     required this.wasteTypes,
+    required this.onPressed,
     required this.onSelectType,
   });
 
   final String selectedType;
   final List<String> wasteTypes;
+  final Future<void> Function(String actionName) onPressed;
   final ValueChanged<String> onSelectType;
 
   @override
@@ -334,32 +347,30 @@ class _WasteTypePanel extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-          Container(
-            height: 36,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.black.withValues(alpha: 0.22),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedType,
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(14),
-                dropdownColor: const Color(0xFFD8E4F4),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                items: wasteTypes
-                    .map(
-                      (type) => DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type, overflow: TextOverflow.ellipsis),
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => onPressed('เปิดรายการประเภทของเสีย'),
+            child: Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.black.withValues(alpha: 0.22),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'I-XVI  (เลือกเพียง 1 รายการเท่านั้น)',
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.88),
                       ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    onSelectType(value);
-                  }
-                },
+                    ),
+                  ),
+                  const Icon(Icons.expand_more, color: Colors.white70),
+                ],
               ),
             ),
           ),
@@ -379,15 +390,37 @@ class _WasteTypePanel extends StatelessWidget {
                 separatorBuilder: (context, index) => const SizedBox(height: 4),
                 itemBuilder: (context, index) {
                   final item = wasteTypes[index];
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: index.isEven
-                          ? const Color(0xFFDEE6F1)
-                          : const Color(0xFFF1F5FA),
-                      borderRadius: BorderRadius.circular(10),
+                  final isSelected = item == selectedType;
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => onSelectType(item),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFFD8E6F9)
+                            : (index.isEven
+                                ? const Color(0xFFDEE6F1)
+                                : const Color(0xFFF1F5FA)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 18,
+                            height: 18,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: const Color(0xFFDAD3F8),
+                            ),
+                            child: const Icon(Icons.science, size: 12),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(item)),
+                        ],
+                      ),
                     ),
-                    child: Text(item),
                   );
                 },
               ),
